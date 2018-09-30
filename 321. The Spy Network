@@ -1,0 +1,101 @@
+// Find depth of each node and protected edges till that.
+// Assign Greedy protected edges from 1 to leaves.
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+#define mod 1000000007
+
+ll gcd(ll aa,ll bb){ if(aa==0) return bb; return(bb%aa,aa); }
+
+vector < pair < int , pair < int , int > > > a[200005];
+int vis[200005];
+int dep[200005];
+int req[200005];
+vector < int > ans; 
+void dfs(int n,int cur)
+{
+    vis[n]=1;
+    int flag=0;
+    for(int i=0;i<a[n].size();i++)
+    {
+        int x=a[n][i].first;
+        if(vis[x]==0)
+        {
+            dep[x]=dep[n]+1;
+            flag=1;
+            dfs(x,cur+a[n][i].second.second);
+            req[n]=max(req[n],req[x]);
+        }
+    }
+    
+        int cc=dep[n]/2;
+        if(dep[n]%2!=0)
+            cc++;        
+       
+          if(cur<cc)
+            req[n]=max(req[n],cc-cur);
+   
+}
+
+void findans(int n , int cur)
+{
+    vis[n]=1;
+    
+    for(int i=0;i<a[n].size();i++)
+    {
+        int x=a[n][i].first;
+        if(vis[x]==0)
+        {
+            if(req[x]>cur)
+            {
+                if(a[n][i].second.second==0)
+                {
+                    ans.push_back(a[n][i].second.first);
+                    findans(x,cur+1);
+                }
+                else
+                {
+                    findans(x,cur);
+                }
+            }
+        }
+    }
+    
+}
+
+
+int main()
+{
+    ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+
+    int n,t1,t2,t3;
+    cin>>n;
+    string s;
+    for(int i=0;i<n-1;i++)
+    {
+        t3=0;
+        cin>>t1>>t2;
+        cin>>s;
+        if(s[0]=='a')
+            cin>>s;
+        else
+            t3=1;    
+        
+        a[t2].push_back({t1,{i+1,t3}});
+    }
+    
+    dfs(1,0);
+    for(int i=1;i<=n;i++)
+        vis[i]=0;
+    findans(1,0);
+    cout<<ans.size()<<endl;
+    for(int i=0;i<ans.size();i++)
+    {
+        cout<<ans[i]<<" ";
+    }
+    cout<<endl;
+    return 0;
+}
