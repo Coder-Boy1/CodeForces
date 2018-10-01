@@ -1,0 +1,84 @@
+// Found for each node dp[i][j] that how many nodes are at distance j in subtree of node i.
+// Found above using DFS. 
+// Calculated answer by ans=dp[node][k]+(dp[p[node]][k-1]-dp[node][k-2])+....
+// Complexity n*k 
+// p[node] means parent of node. Distance k from current means distance k-1 from parent except nodes in current subtree. and so on.
+
+#include <bits/stdc++.h>
+
+using namespace std;
+ 
+vector < int > a[100000];
+
+int dp[50005][505]={0};
+int k;
+int vis[100005]={0};
+int parent[100005]={0};
+void findme(int n)
+{
+    vis[n]=1;
+    for(int i=0;i<a[n].size();i++)
+    {
+        if(vis[a[n][i]]==0)
+        {
+            parent[a[n][i]]=n;
+            findme(a[n][i]);
+            for(int j=1;j<=k;j++)
+            dp[n][j]+=dp[a[n][i]][j-1];
+        }
+    }
+    dp[n][0]=1;
+}
+
+long long findans(int n)
+{
+    long long ans=0;
+    int cur=n,pre=-1,req=k;
+    while(1)
+    {
+        if(pre==-1)
+        {
+            ans+=dp[cur][req];
+        }
+        else
+        {
+            ans+=dp[cur][req]-dp[pre][req-1];
+        }
+        if(cur==1)
+        break;
+        pre=cur;
+        cur=parent[cur];
+        req--;
+        if(req==-1)
+        break;
+     }
+    return ans;
+}
+
+int main()
+{
+   // ios_base::sync_with_stdio(false); cin.tie(NULL);
+    int n;
+    cin>>n>>k;
+    int t1,t2;
+    for(int i=0;i<n;i++)
+    {
+        cin>>t1>>t2;
+        a[t1].push_back(t2);
+        a[t2].push_back(t1);
+    }
+
+
+    findme(1);
+    long long ans=0;
+    for(int i=1;i<=n;i++)
+     {
+         //cout<<parent[i]<<endl;
+           ans+=findans(i);
+     }
+     ans/=2;
+    cout<<ans<<endl;
+    
+    return 0;
+
+}
