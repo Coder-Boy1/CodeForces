@@ -1,0 +1,142 @@
+// Normal Segment Tree with co-ordinate compression.
+// 1segment tree for finding that how many (i,j) pairs are there such that a[i]>a[j] for every j.
+// Then after finding the above found triplet ((i,j),k) pairs for a[i]>a[j]>a[k] using the above answers and one segment tree for every k.
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+#define mod 1000000007
+#define N 1000005
+
+ll gcd(ll aa,ll bb){ if(aa==0) return bb; return(bb%aa,aa); }
+
+ll a[N],tree[5*N],tree1[5*N];
+
+ll f[1000005]={0};
+void build(int n, int s, int e)
+{
+    if(s==e)
+    {
+        tree[n]=f[s];
+        return ;
+    }
+    int m = (s+e)/2;
+    build(n*2,s,m);
+    build(n*2+1,m+1,e);
+    tree1[n]=tree1[n*2]+tree1[n*2+1]; 
+}
+
+
+void update1(int n,int s,int e,int ind,int val)
+{
+    if(s==e)
+    {
+        a[ind]=val;
+        tree1[n]+=val;
+        return ;
+    }
+    int m=(s+e)/2;
+    if(s<=ind && ind<=m)
+    {
+        update1(2*n,s,m,ind,val);
+    }
+    else
+    {
+        update1(2*n+1,m+1,e,ind,val);
+    }
+    tree1[n]=tree1[2*n]+tree1[2*n+1];
+}
+
+ll query1(int n ,int s,int e,int l,int r)
+{
+    if(l>e || r<s)
+        return 0;
+    if(l<=s && e<=r)
+    {
+        return tree1[n];
+    }
+    int m=(s+e)/2;
+    ll q1=query1(2*n,s,m,l,r);
+    ll q2=query1(2*n+1,m+1,e,l,r);
+    return q1+q2;
+}
+
+
+void update(int n,int s,int e,int ind,int val)
+{
+    if(s==e)
+    {
+        a[ind]=val;
+        tree[n]+=val;
+        return ;
+    }
+    int m=(s+e)/2;
+    if(s<=ind && ind<=m)
+    {
+        update(2*n,s,m,ind,val);
+    }
+    else
+    {
+        update(2*n+1,m+1,e,ind,val);
+    }
+    tree[n]=tree[2*n]+tree[2*n+1];
+}
+
+int query(int n ,int s,int e,int l,int r)
+{
+    if(l>e || r<s)
+        return 0;
+    if(l<=s && e<=r)
+    {
+        return tree[n];
+    }
+    int m=(s+e)/2;
+    int q1=query(2*n,s,m,l,r);
+    int q2=query(2*n+1,m+1,e,l,r);
+    return q1+q2;
+}
+
+ll freq[1000005]={0};
+map < int , int > me;
+int main()
+{
+    ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+    int n,q;
+    cin>>n;
+    vector < int > b(n);
+    set < int > d;
+    for(int i=0;i<n;i++)
+    {
+        cin>>b[i];
+        d.insert(b[i]);
+    }
+    set < int >::iterator it;
+    int j=1;
+    for(it=d.begin();it!=d.end();it++)
+    {
+        me[*it]=j++;
+    }
+    for(int i=0;i<n;i++)
+        b[i]=me[b[i]];
+    
+   
+    
+    for(int i=0;i<n;i++)
+    {
+        update(1,1,n,b[i],1);
+        f[i]=query(1,1,n,b[i]+1,n);
+        
+    }
+    ll ans=0;
+    build(1,1,n);
+    for(int i=0;i<n;i++)
+    {
+        update1(1,1,n,b[i],f[i]);
+        ans+=query1(1,1,n,b[i]+1,n);     
+    }
+    
+    cout<<ans<<endl;
+    return 0;
+}
