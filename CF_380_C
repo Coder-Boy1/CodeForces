@@ -1,0 +1,104 @@
+//Segment tree with struct with left right and total count
+// Only merge function is good all other things are normal segment tree.
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+#define mod 1000000007
+#define N 1000005
+
+ll gcd(ll aa,ll bb){ if(aa==0) return bb; return(bb%aa,aa); }
+
+struct node{
+    int left;
+    int right;
+    int ans;
+};
+
+int a[N];
+node tree[5*N];
+node dummy;
+
+string as;
+
+node merge(node A, node B)
+{
+    node temp;
+    temp.ans=A.ans+B.ans;
+    
+    temp.ans+=2*min(A.left,B.right);
+    
+    temp.left=B.left+A.left-min(A.left,B.right);
+    temp.right=A.right+B.right-min(A.left,B.right);
+    
+    return temp;
+}
+
+void build(int n, int s, int e)
+{
+    if(s==e)
+    {
+        if(as[s-1]=='(')
+            tree[n].left=1;
+        else
+            tree[n].right=1;
+        return ;
+    }
+    int m = (s+e)/2;
+    build(n*2,s,m);
+    build(n*2+1,m+1,e);
+    tree[n]=merge(tree[n*2],tree[n*2+1]);
+}
+
+/*void update(int n,int s,int e,int ind,int val)
+{
+    if(s==e)
+    {
+        a[ind]=val;
+        Update Whatever here tree[n]+=val;
+        return ;
+    }
+    int m=(s+e)/2;
+    if(s<=ind && ind<=m)
+    {
+        update(2*n,s,m,ind,val);
+    }
+    else
+    {
+        update(2*n+1,m+1,e,ind,val);
+    }
+    tree[n]=merge(tree[2*n],tree[2*n+1]);
+}*/
+
+node query(int n ,int s,int e,int l,int r)
+{
+    if(l>e || r<s)
+        return dummy;
+    if(l<=s && e<=r)
+    {
+        return tree[n];
+    }
+    int m=(s+e)/2;
+    node q1=query(2*n,s,m,l,r);
+    node q2=query(2*n+1,m+1,e,l,r);
+    return merge(q1,q2);
+}
+
+
+int main()
+{
+    ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+   
+    cin>>as;
+    int n=as.length();
+    build(1,1,n);
+    int q,l,r;
+    cin>>q;
+    for(int i=0;i<q;i++)
+    {
+        cin>>l>>r;
+        cout<<query(1,1,n,l,r).ans<<endl;    
+    }
+    return 0;
+}
