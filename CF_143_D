@@ -1,7 +1,6 @@
 // Placing maximum number of knights on board condition that they dont attack each other.
 // Put all on black squares or put all on white squares.
 
-
 #include <cmath>
 #include <cstdio>
 #include <vector>
@@ -11,7 +10,8 @@ using namespace std;
 
 #define ll long long 
 
-int main() {
+int main() 
+{
     /* Enter your code here. Read input from STDIN. Print output to STDOUT */ 
   ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
    int n,m;
@@ -19,6 +19,21 @@ int main() {
     if(n==1 || m==1)
     {
         cout<<max(n,m)<<endl;
+        return 0;
+    }
+    if(n==2 || m==2)
+    {
+        n=max(n,m);
+        if(n%4==2)
+        {
+            cout<<n+2<<endl;
+            return 0;
+        }
+        
+        
+        if(n%2!=0)
+            n++;
+        cout<<n<<endl;
         return 0;
     }
     ll ans=n*m;
