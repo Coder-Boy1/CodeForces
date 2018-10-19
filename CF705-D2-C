@@ -1,0 +1,126 @@
+// Segment tree basics. Maintainted index of requestes for indivisual x and then proceeded query accordingly.
+// Stored last idnex for x till which all queries are performed.
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+#define mod 1000000007
+#define N 300005
+
+ll gcd(ll aa,ll bb){ if(aa==0) return bb; return(bb%aa,aa); }
+
+int a[N],tree[5*N];
+
+void build(int n, int s, int e)
+{
+    if(s==e)
+    {
+        tree[n]=a[s];
+        return ;
+    }
+    int m = (s+e)/2;
+    build(n*2,s,m);
+    build(n*2+1,m+1,e);
+    tree[n]=tree[n*2]+tree[n*2+1];
+}
+
+void update(int n,int s,int e,int ind,int val)
+{
+    if(s==e)
+    {
+        a[ind]=val;
+        tree[n]=val;
+        return ;
+    }
+    int m=(s+e)/2;
+    if(s<=ind && ind<=m)
+    {
+        update(2*n,s,m,ind,val);
+    }
+    else
+    {
+        update(2*n+1,m+1,e,ind,val);
+    }
+    tree[n]=tree[2*n]+tree[2*n+1];
+}
+
+int query(int n ,int s,int e,int l,int r)
+{
+    if(l>e || r<s)
+        return 0;
+    if(l<=s && e<=r)
+    {
+        return tree[n];
+    }
+    int m=(s+e)/2;
+    int q1=query(2*n,s,m,l,r);
+    int q2=query(2*n+1,m+1,e,l,r);
+    return q1+q2;
+}
+
+vector < int > ss[N];
+int ind[N]={0};
+int arr[N]={0};
+
+int main()
+{
+    ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+    int n,q;
+    cin>>n>>q;
+    
+    int l,r;
+                
+    set < int >::iterator it;
+    set < int > s;
+    
+    int xx=1;
+    for(int i=0;i<q;i++)
+    {
+        cin>>l>>r;
+        
+        if(l==1)
+        { 
+            ss[r].push_back(i+1);
+            arr[xx]=i+1;
+            s.insert(xx++);
+        }
+        else if(l==2)
+        {
+            int d=ind[r];
+            
+            for(int j=d;j<ss[r].size();j++)
+            {
+                int p=ss[r][j];
+               // cout<<i<<" "<<j<<" "<<p<<endl;
+                update(1,1,q,p,1);
+            }
+            ind[r]=ss[r].size();
+        }
+        else
+        {
+            while(!s.empty())
+            {
+                it=s.begin();
+                int temp=*it;
+              //  cout<<i<<" "<<temp<<endl;
+                if(temp<=r)
+                {
+                    
+                    
+                    update(1,1,q,arr[temp],1);
+                    s.erase(it);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        int a1=query(1,1,q,1,q);
+        a1=xx-a1-1;
+        cout<<a1<<endl;
+    }
+    return 0;
+}
