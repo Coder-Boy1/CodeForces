@@ -1,3 +1,5 @@
+// Placing maximum number of knights on chess board with one extra condition. All black squares or all white squares. (Max of these) place all knights there.
+
 #include <cmath>
 #include <cstdio>
 #include <vector>
