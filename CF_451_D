@@ -1,0 +1,51 @@
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+#define ll long long 
+
+int main()
+{
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */ 
+   ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+   
+    string s;
+    cin>>s;
+    int n=s.length();
+    ll a[2][2]={0};
+    
+    for(int i=0;i<n;i++)
+    {
+        if(i%2==0)
+        {
+            a[0][s[i]-'a']++;
+        }
+        else
+        {
+            a[1][s[i]-'a']++;
+        }
+    }
+    
+    ll o=0,e=0;
+    for(int i=0;i<n;i++)
+    {
+        if(i%2==0)
+        {
+            o+=a[0][s[i]-'a'];
+            e+=a[1][s[i]-'a'];
+            a[0][s[i]-'a']--;
+        }
+        else
+        {
+            o+=a[1][s[i]-'a'];
+            e+=a[0][s[i]-'a'];
+            a[1][s[i]-'a']--;
+        }
+    }
+    cout<<e<<" "<<o<<endl;
+    
+    return 0;
+}
