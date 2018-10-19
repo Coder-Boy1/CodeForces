@@ -1,0 +1,22 @@
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+#define ll long long 
+
+int main() {
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */ 
+  ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+   int n,m;
+    cin>>n>>m;
+    
+    ll ans=n*m;
+    ans++;
+    ans/=2;
+    cout<<ans<<endl;
+    
+    return 0;
+}
