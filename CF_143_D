@@ -1,4 +1,6 @@
-// Placing maximum number of knights on chess board with one extra condition. All black squares or all white squares. (Max of these) place all knights there.
+// Placing maximum number of knights on board condition that they dont attack each other.
+// Put all on black squares or put all on white squares.
+
 
 #include <cmath>
 #include <cstdio>
@@ -14,7 +16,11 @@ int main() {
   ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
    int n,m;
     cin>>n>>m;
-    
+    if(n==1 || m==1)
+    {
+        cout<<max(n,m)<<endl;
+        return 0;
+    }
     ll ans=n*m;
     ans++;
     ans/=2;
