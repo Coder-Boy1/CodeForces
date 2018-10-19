@@ -1,0 +1,190 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector < int > a[100005];
+int dis[100005]={0};
+int parent[100005]={0},level[100005]={0},vis[100005]={0},P[100005][50]={0};
+int n,maxd,MAXLOG;
+
+void mybfs(int n)
+{
+    queue < int > me;
+    me.push(n);
+    dis[n]=0;
+    
+    while(!me.empty())
+    {
+        int temp=me.front();
+        vis[temp]=1;
+        me.pop();
+        for(int i=0;i<a[temp].size();i++)
+        {
+            if(vis[a[temp][i]]==0)
+            {
+                vis[a[temp][i]]=1;
+                me.push(a[temp][i]);
+                dis[a[temp][i]]=dis[temp]+1;
+            }
+        }    
+    }
+}
+void fun()
+{
+    for(int i=0;i<=100000;i++)
+    {
+        dis[i]=0;
+        vis[i]=0;
+    }
+}
+
+
+
+int findlca(int u , int v){
+    if(level[u] < level[v]){
+        swap(u,v) ;
+    }
+    int dist = level[u] - level[v] ;
+    while(dist > 0){
+        int raise_by = log2(dist);
+        u = P[u][raise_by];
+        dist -= (1<<raise_by) ;
+    }
+
+    if(u == v){
+        return u ;
+    }
+
+
+    for(int j = MAXLOG ; j >= 0 ; --j){
+        //Checking P[u][j] != P[v][j] because if P[u][j] == P[v][j]
+        //P[u][j] would be the Lth ancestor such that (L >= k)
+        //where kth ancestor is the LCA
+        //But we want the (k-1)th ancestor.
+        if((P[u][j] != -1) && (P[u][j] != P[v][j])){
+            u = P[u][j] ;
+            v = P[v][j] ;
+        }
+    }
+    return parent[u] ; //or parent[v]
+}
+
+
+void mydfs(int n)
+{
+    int i;
+    vis[n]=1;
+    for(i=0;i<a[n].size();i++)
+    {
+        if(vis[a[n][i]]==0)
+        {
+            vis[a[n][i]]=1;
+            parent[a[n][i]]=n;
+            level[a[n][i]]=level[n]+1;
+            mydfs(a[n][i]);
+        }
+    }
+}
+
+void binarylifting()
+{
+    int i,j;
+    for(i = 1 ; i <= n ; i++){
+        for(j = 0 ; j <= MAXLOG+1 ; j++){
+            P[i][j] = -1;
+        }
+    }
+
+    for(i = 1 ; i <= n ; ++i){
+        P[i][0] = parent[i] ;
+    }
+
+    for(j = 1; j <= MAXLOG + 1 ; j++){
+        for(i = 1 ; i <= n ; i++){
+            if(P[i][j-1] != -1){
+                P[i][j] = P[P[i][j-1]][j-1] ;
+            }
+        }
+    }
+}
+
+
+ 
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    int m,d,t1,t2;
+    cin>>n>>m>>d;
+    vector < int > temp;
+    for(int i=0;i<m;i++)
+    {
+        cin>>t1;
+        temp.push_back(t1);
+    }
+    for(int i=0;i<n-1;i++)
+    {
+        cin>>t1>>t2;
+        a[t1].push_back(t2);
+        a[t2].push_back(t1);
+    }
+    int ans=0;
+    if(m==1)
+    {
+        fun();
+        mybfs(temp[0]);
+        for(int i=1;i<=n;i++)
+        {
+            if(dis[i]<=d)
+            {
+                ans++;
+            }
+        }
+        cout<<ans<<endl;
+        
+    }
+    else
+    {
+        fun();
+        mybfs(temp[0]);
+        int maxd=temp[0];
+        for(int i=0;i<m;i++)
+        {
+            if(dis[temp[i]]>dis[maxd])
+                maxd=temp[i];
+        }
+        
+        fun();
+        mybfs(maxd);
+        int maxd1=maxd;
+        for(int i=0;i<m;i++)
+        {
+            if(dis[temp[i]]>dis[maxd1])
+                maxd1=temp[i];
+        }
+            fun();         
+            MAXLOG=log2(n);
+            vis[1]=1;
+            level[1]=0;
+            parent[1]=0;
+            mydfs(1);
+            binarylifting();
+        
+      //  cout<<maxd1<<" "<<maxd<<endl;
+      
+      // cout<<findlca(5,4);
+          for(int i=1;i<=n;i++)
+        {
+         //   cout<<level[i]<<endl;
+            int x1=findlca(maxd1,i);
+            int x2=findlca(maxd,i);
+            int d1=abs(level[maxd1]+level[i]-2*level[x1]);
+            int d2=abs(level[maxd]+level[i]-2*level[x2]);
+           // cout<<x1<<" "<<x2<<" "<<i<<" "<<d1<<" "<<d2<<endl;
+            if(d1<=d && d2<=d)
+               ans++;
+        }
+      
+        cout<<ans<<endl;
+    } 
+    return 0;
+}
