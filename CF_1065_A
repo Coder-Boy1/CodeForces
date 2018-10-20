@@ -1,0 +1,34 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+#define mod 1000000007
+
+ll gcd(ll aa,ll bb) { if(aa==0) return bb; return(bb%aa,aa); }
+
+
+int main()
+{
+    ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+    
+    int t;
+    cin>>t;
+    while(t--)
+    {
+        ll s,a,b,c;
+        cin>>s>>a>>b>>c;
+        
+        ll ans=s/c;
+        ll d=ans/a;
+        d*=b;
+        
+        ans+=d;
+        cout<<ans<<endl;
+        
+    }
+
+
+    return 0;
+}
