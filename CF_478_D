@@ -1,3 +1,9 @@
+// Applied DP for each height.
+// Taking dp[i][j] denotes current levels are i and used green blocks are j .
+// There are 2 ways dp[i-1][j] (filling all of this level with red) condition: total_req - total_green_used <= total_available_red
+// dp[i-1][j-i] (fill all of this level with green.) condtion j>=i
+
+
 #include <bits/stdc++.h>
 
 using namespace std;
