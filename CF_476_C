@@ -1,0 +1,47 @@
+// maths
+// if remainder is y then x should be ((k*b*y)+y)
+// applied summation over k and y. K from 1 to a. and Y from 1 to b-1.
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+#define mod 1000000007
+
+ll gcd(ll aa,ll bb) { if(aa==0) return bb; return(bb%aa,aa); }
+
+int main()
+{
+    ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+   
+    ll a,b;
+    
+    cin>>a>>b;
+    
+    ll ans=a*(a+1);
+    ans/=2;
+    ll ans1=b*(b-1);
+    ans1/=2;
+    ans%=mod;
+    ans1%=mod;
+    ans=ans*ans1;
+    ans%=mod;
+    ans*=b;
+    ans%=mod;
+    
+    ll ans2=b*(b-1);
+    ans2/=2;
+    ans2%=mod;
+    ans2*=a;
+    ans2%=mod;
+    
+    ans+=ans2;
+    ans%=mod;
+    
+    cout<<ans<<endl;
+    
+    
+    return 0;
+}
