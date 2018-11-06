@@ -1,0 +1,77 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+#define mod 998244353
+
+ll gcd(ll aa,ll bb) { if(aa==0) return bb; return(bb%aa,aa); }
+
+
+
+int x[2005];
+int y[2005];
+
+map <  double , int > ans[2005];
+
+int main()
+{
+    ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+   
+    ll n;
+    
+    cin>>n;
+    
+    for(int i=0;i<n;i++)
+    {
+        cin>>x[i]>>y[i];
+    }
+    
+    double d;
+    
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<n;j++)
+        {
+            if(i==j)
+                continue;
+            
+            d=y[j]-y[i]+0.0;
+            if(x[j]!=x[i])
+            d/=(x[j]-x[i]+0.0);
+            else
+            d=10000000000.0;
+            ans[i][d]++;
+        }
+    }
+    
+    ll golu=0;
+    
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<n;j++)
+        {
+            if(i==j)
+                continue;
+            
+            
+            d=y[j]-y[i]+0.0;
+            if(x[j]!=x[i])
+            d/=(x[j]-x[i]+0.0);
+            else
+            d=10000000000.0;
+         //   cout<<y[j]-y[i]<<" "<<x[j]-x[i]<<endl;
+         //   cout<<d<<endl; 
+            
+            ll x=n-2;
+            x-=ans[i][d]-1;
+            golu+=x;
+        }
+    }
+    golu/=6;
+    
+    cout<<golu<<endl;
+    
+    return 0;
+}
