@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+#define mod 998244353
+
+ll gcd(ll aa,ll bb) { if(aa==0) return bb; return(bb%aa,aa); }
+
+
+
+int x[2005];
+int y[2005];
+
+map <  double , int > ans[2005];
+
+int main()
+{
+    ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+   
+    ll n;
+    cin>>n;
+    ll k;
+    cin>>k;
+    
+    ll n1=n;
+    ll ans=0;
+    while(1)
+    {
+        if(n1>k)
+            break;
+        if(n1==k)
+        {
+            cout<<"YES"<<endl;
+            cout<<ans<<endl;
+            return 0;
+        }
+        n1*=n;
+        ans++;
+    }
+    cout<<"NO"<<endl;
+    return 0;
+}
