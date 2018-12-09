@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+#define inf 1000000000000000000
+
+#define mod 1000000007
+
+ll gcd(ll aa,ll bb) { if(aa==0) return bb; return(bb%aa,aa); }
+
+ll a[500][500][2];
+
+int main()
+{
+    //ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+
+    freopen("trip.in", "r", stdin);
+    freopen("trip.out", "w", stdout);
+
+    ll n,m,x,y,z;
+    cin>>n>>m;
+
+    for(int i=1;i<=n;i++)
+    {
+        for(int j=1;j<=n;j++)
+        {
+            a[i][j][0]=inf;
+            a[i][j][1]=1;
+        }
+    }
+    for(int i=0;i<m;i++)
+    {
+        cin>>x>>y>>z;
+        a[x][y][0]=min(a[x][y][0],z);
+        a[y][x][0]=a[x][y][0];
+    }
+
+    for (int k = 1; k <= n; k++) 
+    {
+        for (int i = 1; i <= n; i++) 
+        {
+            for (int j = 1; j <=n; j++) 
+            {
+                if (a[i][k][0] + a[k][j][0] < a[i][j][0])
+                {
+                      a[i][j][0] = a[i][k][0] + a[k][j][0];
+                      a[i][j][1] = a[i][k][1] + a[k][j][1];
+                }
+                
+                if(a[i][k][0] + a[k][j][0] == a[i][j][0] )
+                {
+                    a[i][j][1]= min(a[i][j][1],a[i][k][1]+a[k][j][1]);
+                }
+            }
+        }
+    }
+
+    long long ans=0,count=0;
+    for(int i=1;i<=n;i++)
+    {
+        for(int j=i+1;j<=n;j++)
+        {
+            ans+=a[i][j][1];
+            count++;
+        }
+    }
+    long double golu=(ans*1.0)/count;
+
+    cout<<std::fixed<<std::setprecision(10)<<golu<<endl;
+
+    return 0;
+}
