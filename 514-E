@@ -1,0 +1,171 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+#define int long long
+
+
+
+ll freq[105]={0};
+ll dp[110]={0};
+
+const int sz = 101;
+const int mod = 1e9+7;
+
+struct matrix
+{
+        int a[sz][sz];
+
+        void fun()
+        {
+            memset(a,0,sizeof(a));
+        }
+
+        void makeid()
+        {
+            fun();
+            for(int i=0;i<sz;i++)
+            {
+                a[i][i]=1;
+            }
+        }
+
+
+        matrix operator + (const matrix &tmp) const
+        {
+            matrix ans;
+            for(int i=0;i<sz;i++)
+            {
+                for(int j=0;j<sz;j++)
+                {
+                    ans.a[i][j] = (a[i][j] + tmp.a[i][j])%mod;
+                }
+            }
+            return ans;
+        }
+
+        matrix operator * (const matrix &tmp) const
+        {
+            matrix ans;
+            for(int i=0;i<sz;i++)
+            {
+                for(int j=0;j<sz;j++)
+                {
+                    ans.a[i][j]=0;
+                    for(int k=0;k<sz;k++)
+                    {
+                        ans.a[i][j] = ( ans.a[i][j] + (a[i][k] * tmp.a[k][j])%mod )%mod;
+                    }
+                }
+            }
+            return ans;
+        }
+};
+
+
+matrix power(matrix a, int b)
+{
+    matrix ans;
+    ans.makeid();
+    while(b)
+    {
+        if((b%2)!=0)
+        {
+            ans = ans * a;
+        }
+        a = a * a;
+        b/=2;
+    }
+    return ans;
+}
+
+
+
+
+
+
+
+int32_t main()
+{
+    matrix a;
+
+    int n,k;
+    cin>>n>>k;
+
+    int d;
+
+    for(int i=0;i<n;i++)
+    {
+        cin>>d;
+        freq[d]++;
+    }
+
+
+        dp[0]=1;
+        ll tt=1;
+    for(int i=1;i<=100;i++)
+    {
+       for(int j=1;j<=i;j++)
+        {
+            dp[i]+=freq[j]*dp[i-j];
+            dp[i]%=mod;
+        }
+        tt+=dp[i];
+
+        tt%=mod;
+
+    }
+
+    a.fun();
+    for(int i=0;i<100;i++)
+    {
+            a.a[0][i]=freq[i+1];
+            a.a[100][i]=freq[i+1];
+    }
+    a.a[100][100]=1;
+
+    for(int i=1;i<100;i++)
+    {
+        a.a[i][i-1]=1;
+    }
+
+
+    if(k<=100)
+    {
+        ll ans=0;
+        for(int i=0;i<=k;i++)
+        {
+            ans+=dp[i];
+            ans%=mod;
+        }
+        cout<<ans<<endl;
+        return 0;
+    }
+
+    k-=100;
+
+    a =  power(a,k);
+
+
+
+    int p=100;
+    ll ans=0;
+
+
+
+    dp[0]=1;
+    dp[0]=tt;
+    for(int i=1;i<=101;i++)
+    {
+        ans+=a.a[100][i-1]*dp[p];
+        p--;
+        ans%=mod;
+    }
+
+    cout<<ans<<endl;
+
+
+    return 0;
+}
