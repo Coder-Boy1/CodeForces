@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+
+ll ans[10000005];
+
+int main()
+{
+
+    ll n,x,y;
+    cin>>n>>x>>y;
+
+    ans[1]=x;
+
+    for(int i=2;i<=n;i++)
+    {
+        if(i%2==0)
+        {
+            ans[i]=min(ans[i-1]+x,ans[i/2]+y);
+        }
+        else
+        {
+            ans[i]=min(ans[i-1]+x,ans[(i+1)/2]+x+y);
+        }
+    }
+
+    cout<<ans[n]<<endl;
+
+    return 0;
+}
