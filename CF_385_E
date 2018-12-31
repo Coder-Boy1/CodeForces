@@ -1,0 +1,113 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define ll long long
+
+#define int long long
+
+
+
+ll freq[105]={0};
+ll dp[110]={0};
+
+const int sz = 6;
+long long mod = 1e9+7;
+
+struct matrix
+{
+        int a[sz][sz];
+
+        void fun()
+        {
+            memset(a,0,sizeof(a));
+        }
+
+        void makeid()
+        {
+            fun();
+            for(int i=0;i<sz;i++)
+            {
+                a[i][i]=1;
+            }
+        }
+
+
+        matrix operator + (const matrix &tmp) const
+        {
+            matrix ans;
+            for(int i=0;i<sz;i++)
+            {
+                for(int j=0;j<sz;j++)
+                {
+                    ans.a[i][j] = (a[i][j] + tmp.a[i][j])%mod;
+                }
+            }
+            return ans;
+        }
+
+        matrix operator * (const matrix &tmp) const
+        {
+            matrix ans;
+            for(int i=0;i<sz;i++)
+            {
+                for(int j=0;j<sz;j++)
+                {
+                    ans.a[i][j]=0;
+                    for(int k=0;k<sz;k++)
+                    {
+                        ans.a[i][j] = ( ans.a[i][j] + (a[i][k] * tmp.a[k][j])%mod )%mod;
+                    }
+                }
+            }
+            return ans;
+        }
+};
+
+
+matrix power(matrix a, int b)
+{
+    matrix ans;
+    ans.makeid();
+    while(b)
+    {
+        if((b%2)!=0)
+        {
+            ans = ans * a;
+        }
+        a = a * a;
+        b/=2;
+    }
+    return ans;
+}
+
+
+int32_t main()
+{
+    matrix a;
+
+    int n,sx,sy,dx,dy,t;
+    cin>>n>>sx>>sy>>dx>>dy>>t;
+    sx--;
+    sy--;
+    dx%=n; dx+=n; dx%=n;
+    dy%=n; dy+=n; dy%=n;
+    a.a[0][0]=2; a.a[0][1]=1; a.a[0][2]=1; a.a[0][3]=0; a.a[0][4]=1; a.a[0][5]=2;
+    a.a[1][0]=1; a.a[1][1]=2; a.a[1][2]=0; a.a[1][3]=1; a.a[1][4]=1; a.a[1][5]=2;
+    a.a[2][0]=1; a.a[2][1]=1; a.a[2][2]=1; a.a[2][3]=0; a.a[2][4]=1; a.a[2][5]=2;
+    a.a[3][0]=1; a.a[3][1]=1; a.a[3][2]=0; a.a[3][3]=1; a.a[3][4]=1; a.a[3][5]=2;
+    a.a[4][0]=0; a.a[4][1]=0; a.a[4][2]=0; a.a[4][3]=0; a.a[4][4]=1; a.a[4][5]=1;
+    a.a[5][0]=0; a.a[5][1]=0; a.a[5][2]=0; a.a[5][3]=0; a.a[5][4]=0; a.a[5][5]=1;
+    
+    mod = n;
+    a =  power(a,t);
+ll ans1=a.a[0][0]*sx + a.a[0][1]*sy + a.a[0][2]*dx + a.a[0][3]*dy + a.a[0][4]*0 + a.a[0][5]*1;
+
+ll ans2=a.a[1][0]*sx + a.a[1][1]*sy + a.a[1][2]*dx + a.a[1][3]*dy + a.a[1][4]*0 + a.a[1][5]*1;
+
+    ans1%=mod;
+    ans2%=mod;
+    cout<<ans1+1<<" "<<ans2+1<<endl;
+
+    return 0;
+}
