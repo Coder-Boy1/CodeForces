@@ -100,7 +100,7 @@ void build(vector < int > a)
 }
 
 long long final_ans=0;
-// Recursively finding answer for each node in big trie.
+// Recursively finding answer for each node in main trie.
 void findans(int ind)
 {
     if(trie[ind][0]==0 && trie[ind][1]==0)
