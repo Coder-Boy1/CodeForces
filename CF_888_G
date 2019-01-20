@@ -1,0 +1,155 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define N 3000005
+
+int trie[N][2] , trie1[N][2];
+int vis[N][2];
+int nxt = 1;
+int nxt1 = 1;
+vector < int > arr[N];
+
+long long ans=0;
+
+int power[35];
+
+int pre()
+{
+    power[0]=1;
+    for(int i=1;i<=30;i++)
+        power[i]=power[i-1]*2;
+    
+    return 0;
+}
+
+// This is adding to general trie and then arr array is to store how many childerens are then in left and right child
+void Add (int x){
+    int node = 0;
+    int cur=1;
+    for (int i = 30; i>=0; i--) { 
+        cur=power[i];
+        int temp =  (cur & x);
+        if(temp>0)
+            temp=1;
+        if(trie[node][temp] == 0) {
+            node = trie[node][temp] = nxt;
+            arr[node].push_back(x);            
+            nxt++;
+        } else {
+            node = trie[node][temp];
+            arr[node].push_back(x);
+        }
+    }
+}
+
+// Finding minimum xor for some values 
+int Find (int x, int pp) {
+    int idx = 0;
+    int cur=1;
+    int ans=0;
+    for (int i = 30; i>=0; i--)
+    {   
+        cur=power[i];
+        int temp=cur & x;
+        if(temp>0)
+            temp = 1;
+        
+        if (vis[idx][temp] != pp)
+        {
+            idx = trie1[idx][(temp+1)%2];
+            ans+=power[i];
+        }
+        else
+        {
+            idx = trie1[idx][temp];
+            
+        }
+    }
+    return ans;
+}
+
+// Level wise adding values to new trie
+void add1(int x, int pp) {
+  int node = 0;
+  int cur = 1;
+  for (int i = 30; i >= 0; i--) {
+    cur = power[i];
+    int temp = (cur & x);
+    if (temp > 0)
+      temp = 1;
+    if (vis[node][temp] != pp) {
+      vis[node][temp]=pp;
+      node = trie1[node][temp] = nxt1;
+      nxt1++;
+    } else {
+      node = trie1[node][temp];
+    }
+  }
+}
+int px=1;
+
+// Adding one of the two children in trie and from other searching for minimum xor
+void build(vector < int > a)
+{
+    nxt1=1;
+    for(int i=0;i<a.size();i++)
+    {
+        add1(a[i],px);
+    }
+}
+
+long long final_ans=0;
+// Recursively finding answer for each node in big trie.
+void findans(int ind)
+{
+    if(trie[ind][0]==0 && trie[ind][1]==0)
+        return ;
+
+    if(trie[ind][0]==0)
+    {
+        findans(trie[ind][1]);
+        return ;
+    }
+    if(trie[ind][1]==0)
+    {
+        findans(trie[ind][0]);
+        return ;
+    }    
+    vector < int > t1=arr[trie[ind][0]];
+    vector < int > t2=arr[trie[ind][1]];
+
+    build(t1);
+
+    int ans=t1[0]^t2[0];
+    for(int i=0;i<t2.size();i++)
+    {
+        ans=min(ans,Find(t2[i],px));
+    }
+    
+    px++;
+    final_ans+=ans;
+
+    findans(trie[ind][0]);
+    findans(trie[ind][1]);
+}
+
+int32_t main() {
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */   
+
+    int n;
+    cin>>n;
+    pre();
+    vector < int > a(n);
+    for(int i=0;i<n;i++)
+    {
+        cin>>a[i];
+        Add(a[i]);
+    }
+
+    findans(0);
+
+    cout<<final_ans<<endl;
+
+    return 0;
+}
