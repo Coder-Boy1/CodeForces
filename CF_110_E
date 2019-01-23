@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define int long long
+#define N 100005
+
+vector < int > a[N];
+int vis[N];
+int ans[N];
+int cnt[N];
+
+int valid(int n)
+{
+        while(n)
+        {
+                if(n%10!=4 && n%10!=7)
+                        return 1;
+                n/=10;
+        }
+        return 0;
+}
+
+void dfs(int n,int comp)
+{
+        vis[n]=1;
+        cnt[comp]++;
+        for(int i=0;i<a[n].size();i++)
+        {
+                if(vis[a[n][i]]==0)
+                {
+                        dfs(a[n][i],comp);
+                }
+        }
+}
+
+int32_t main()
+{       
+        int n;
+        cin>>n;
+
+        int t1,t2,w;
+
+        for(int i=0;i<n-1;i++)
+        {
+                cin>>t1>>t2>>w;
+                if(valid(w))
+                {
+                        a[t1].push_back(t2);
+                        a[t2].push_back(t1);
+                }
+        }
+
+        int comp=1,total=0;
+        for(int i=1;i<=n;i++)
+        {
+                if(vis[i]==0)
+                {
+                        dfs(i,comp);
+                        comp++;
+                        total+=cnt[comp-1];
+                }
+        }
+
+        if(comp<3)
+        {
+                cout<<"0"<<endl;
+                return 0;
+        }
+        int ftotal=0;
+        for(int i=1;i<comp;i++)
+        {
+                int temp=total-cnt[i];
+                temp=temp*(temp-1);
+                temp*=cnt[i];
+                ftotal+=temp;
+        }
+        cout<<ftotal<<endl;
+        return 0;
+}
