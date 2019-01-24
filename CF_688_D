@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define N 1000005
+
+int a[N],arr[N];
+int ans[N];
+
+void pre()
+{
+        for(int i=2;i<N;i++)
+        {
+                if(a[i]==0)
+                {
+                        for(int j=i;j<N;j+=i)
+                                a[j]=i;
+                }
+        }
+}
+
+void calc(int n)
+{
+        vector <pair<int, int>> power;
+        while(n!=1)
+        {
+                int cur=a[n],c=0;
+                while(n%cur==0)
+                {
+                        c++;
+                        n/=cur;
+                }
+                power.push_back({cur,c});
+        }
+        for (int i = 0; i < power.size(); i++)
+        {
+          ans[power[i].first] = max(ans[power[i].first], power[i].second);
+        }
+}
+
+int check(int n)
+{
+        int foo=0;
+
+        map < int , int > power;
+        while(n>1)
+        {
+                power[a[n]]++;
+                n/=a[n];
+        }
+
+        for(auto it=power.begin();it!=power.end();it++)
+        {
+
+                if(ans[it->first]<it->second)
+                        return 0;
+        }
+        return 1;
+
+}
+
+int32_t main()
+{       
+        int n,k;
+        cin>>n>>k;
+
+        pre();
+        for(int i=0;i<n;i++)
+        {
+                scanf("%d",&arr[i]);
+                calc(arr[i]);
+        }
+
+        int foo=check(k);
+
+        if(foo==1)
+        {
+                cout<<"Yes"<<endl;
+        }
+        else
+        {
+                cout<<"No"<<endl;
+        }
+
+
+        return 0;
+}
