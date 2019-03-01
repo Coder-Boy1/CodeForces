@@ -1,0 +1,104 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+//#define int long long
+
+typedef struct data
+{
+        data *bit[2];
+        int cnt=0;
+        int sz=0;
+}trie;
+
+trie* head;
+
+void insert_node(int x,int flag)
+{
+        trie* node= head;
+        for(int i=30;i>=0;i--)
+        {
+                int curbit=(x>>i)&1;
+                if(node->bit[curbit]==NULL)
+                {
+
+                        node->bit[curbit]=new trie();
+                        node->bit[curbit]->sz=(1LL<<i);
+                     //   cout<<i<<" "<<node->sz<<endl;
+
+                }
+                node=node->bit[curbit];
+                if(flag)
+                        node->cnt++;
+        }
+}
+
+void remove_node(int x)
+{
+        trie* node=head;
+        for(int i=30;i>=0;i--)
+        {
+                int curbit=(x>>i)&1;
+                node=node->bit[curbit];
+                node->cnt--;
+        }
+}
+
+int query_node(int x)
+{
+        trie* node=head;
+        int ans=0,boo=0;
+        for(int i=30;i>=0;i--)
+        {
+                int curbit=(x>>i)&1;
+                if(node->bit[curbit]==NULL)
+                {
+                        return ans;
+                }
+                else if( node->bit[curbit]->cnt!=node->bit[curbit]->sz)
+                {
+                        node=node->bit[curbit];
+                }
+                else
+                {
+                        ans+=(1LL<<i);
+                        if(node->bit[curbit^1]==NULL)
+                                return ans;
+                        node=node->bit[curbit^1];
+                }
+        }
+        return ans;
+}
+
+int vis[2000000];
+
+int32_t main()
+{
+        ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+        head=new trie();
+        int n,m;
+        cin>>n>>m;
+
+        vector < int > a(n);
+        for(int i=0;i<n;i++)
+        {
+                cin>>a[i];
+                vis[a[i]]=1;
+        }
+
+        for(int i=0;i<600000;i++)
+        {
+                if(vis[i]==1)
+                        insert_node(i,vis[i]);
+        }
+        int q=0;
+
+        for(int i=0;i<m;i++)
+        {
+                int temp;
+                cin>>temp;
+                q^=temp;
+                cout<<query_node(q)<<endl;
+        }
+        return 0;
+}
