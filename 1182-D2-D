@@ -1,0 +1,185 @@
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define N 100005
+ 
+int level[N], level1[N];
+vector < int > a[N];
+int vis[N];
+int deg[N];
+int tot;
+int xx;
+ 
+void dfs(int n)
+{
+        vis[n]=1;
+        for(int i=0;i<a[n].size();i++)
+        {
+                if(vis[a[n][i]]==0)
+                {
+                        level[a[n][i]]=level[n]+1;
+                        dfs(a[n][i]);
+                }
+        }
+}
+ 
+void dfs1(int n)
+{
+        vis[n]=1;
+        for(int i=0;i<a[n].size();i++)
+        {
+                if(vis[a[n][i]]==0)
+                {
+                        level1[a[n][i]]=level1[n]+1;
+                        dfs1(a[n][i]);
+                }
+        }
+}
+ 
+ 
+void foo()
+{
+        for(int i=0;i<N;i++)
+        {
+                vis[i]=0;
+                deg[i]=0;
+        }
+}
+ 
+int getd(int n)
+{
+        int maxd = 1;
+        for(int i=1;i<=n;i++)
+        {
+                if(level[i]>level[maxd])
+                        maxd = i;
+        }
+        return maxd;
+}
+ 
+int getd1(int n)
+{
+        int maxd = 1;
+        for(int i=1;i<=n;i++)
+        {
+                if(level1[i]>level1[maxd])
+                        maxd = i;
+        }
+        return maxd;
+}
+ 
+int check(int n)
+{
+        foo();
+        level[n]=0;
+        dfs(n);
+        for(int i=1;i<=tot;i++)
+        {
+                int s=a[i].size();
+                if(deg[level[i]]==0)
+                {
+                        deg[level[i]]=s;
+                }
+                else if(deg[level[i]]!=s)
+                {
+                        return 0;
+                }
+        }
+        return 1;
+}
+ 
+int directx(int n)
+{
+        vis[n]=1;
+        queue < int > q;
+        q.push(n);
+ 
+        while(!q.empty())
+        {
+                int top=q.front();
+                q.pop();
+                for(int i=0;i<a[top].size();i++)
+                {
+                        if(vis[a[top][i]]==0 && a[a[top][i]].size()<=2 )
+                        {
+                                vis[a[top][i]]=1;
+                                q.push(a[top][i]);
+                                if(a[a[top][i]].size()==1)
+                                        return a[top][i];
+                        }
+                        
+                }
+        }
+ 
+        return n;
+}
+ 
+int getx(int f, int s)
+{
+        int dia = level[f];
+        
+        int mid = s;
+        int req=dia/2;
+        
+        for(int i=1;i<=tot;i++)
+        {
+           if(level[i]+level1[i] == dia && abs(level[i]-level1[i])<=req )
+                {
+                        req = abs(level[i]-level1[i]);
+                        mid = i;
+                }
+        }
+        
+        foo();
+        xx = mid;
+        return directx(mid);
+ 
+}
+ 
+int main()
+{
+        int n;
+        cin>>n;
+        tot = n;
+        for(int i=1;i<n;i++)
+        {
+                int u, v;
+                cin>>u>>v;
+ 
+                a[u].push_back(v);
+                a[v].push_back(u);
+        }
+ 
+        dfs(1);
+        int f = getd(n);
+        foo();
+        dfs1(f);
+        int s = getd1(n);
+        foo();
+        level[s]=0;
+        dfs(s);
+        int x = getx(f,s);
+        
+        if(check(f))
+        {
+                cout<<f<<endl;
+        }
+        else if(check(s))
+        {
+                cout<<s<<endl;
+        }
+        else if(check(xx))
+        {
+                cout<<xx<<endl;
+        }
+        else if(check(x))
+        {
+                cout<<x<<endl;
+        }
+        else
+        {
+                cout<<"-1"<<endl;
+        }
+        return 0;
+}
