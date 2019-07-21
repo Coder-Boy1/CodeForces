@@ -1,0 +1,69 @@
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+ 
+#define  mod 1000000007
+#define  N   17000000
+#define  inf 1e18
+ 
+ 
+int sos[N];
+ 
+    
+void SOS(vector < int > a, int n)
+{
+        for(int i = 0; i<(1<<n); i++)
+                sos[i] = a[i];
+ 
+        for(int i = 0;i < n; i++)
+        {       
+                for(int mask = 0; mask < (1<<n); ++mask)
+                {
+                        if(mask & (1<<i))
+                                sos[mask] += sos[mask^(1<<i)];
+                }
+        }
+           
+ 
+}
+ 
+ 
+int32_t main()
+{
+        ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
+ 
+       
+        int n;
+        cin>>n;
+        vector < int > freq(N, 0);
+        vector < int > a;
+        for(int i=0;i<n;i++)
+        {
+                string s;
+                cin>>s;
+                int temp = 0;
+                for(int j=0;j<3;j++)
+                {
+                        int cur = s[j]-'a';
+                        temp |= 1<<cur;
+                }
+                a.push_back(temp);
+                freq[temp]++;
+        }
+ 
+        SOS(freq,24);
+ 
+        int ans = 0;
+        for(int i=0;i<(1<<24);i++)
+        {
+                int cur = sos[(1<<24)-1-i];
+                cur= n-cur;
+                cur*=cur;
+                ans^=cur;
+        }
+        
+        cout<<ans<<endl;
+        return 0;
+}
