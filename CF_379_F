@@ -1,0 +1,136 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define N 1001005
+#define LG 24
+
+vector < int > a[N];
+int parent[N][LG];
+int level[N];
+int vis[N];
+
+void dfs(int n)
+{
+    vis[n] = 1;
+    for(int i=0;i<a[n].size();i++)
+    {
+        if(vis[a[n][i]]==0)
+        {
+            level[a[n][i]] = level[n] + 1;
+            parent[a[n][i]][0] = n;
+            dfs(a[n][i]);
+        }
+    }
+}
+
+
+void preCompute(int n)
+{
+    for(int i=1;i<LG;i++)
+    {
+        for(int j=1;j<=n;j++)
+        {
+            if(parent[j][i-1])
+                parent[j][i] = parent[parent[j][i-1]][i-1];
+        }
+    }
+}
+
+int lca(int u, int v)
+{
+    if(level[u]<level[v])
+        swap(u,v);
+
+    int diff = level[u] - level[v];
+    for(int i=LG-1;i>=0;i--)
+    {
+        if((1<<i) & diff)
+        {
+            u = parent[u][i];
+        }
+    }
+
+    if(u==v)
+        return u;
+
+    for(int i=LG-1;i>=0;i--)
+    {
+        if(parent[u][i] && parent[u][i]!=parent[v][i])
+        {
+            u=parent[u][i];
+            v=parent[v][i];
+        }
+    }
+    return parent[u][0];
+}
+
+
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int q;
+    cin>>q;
+
+    a[1].push_back(2);
+    a[2].push_back(1);
+    a[1].push_back(3);
+    a[3].push_back(1);
+    a[1].push_back(4);
+    a[4].push_back(1);
+
+    int n = 4;
+    vector < int > que;
+    for(int i=0;i<q;i++)
+    {
+        int x;
+        cin>>x;
+
+        n++;
+        a[x].push_back(n);
+        a[n].push_back(x);
+        que.push_back(n);
+        n++;
+        a[x].push_back(n);
+        a[n].push_back(x);
+        que.push_back(n);
+    }
+
+    dfs(1);
+    preCompute(n);
+
+
+    int d1 = 2;
+    int d2 = 4;
+    int maxd = 2;
+    for(int i=0;i<que.size();i++)
+    {
+        int x = que[i];
+
+        int x1 = lca(x, d1);
+        int x2 = lca(x, d2);
+
+        int newd1 = level[x] + level[d1] - 2*level[x1];
+        int newd2 = level[x] + level[d2] - 2*level[x2];
+
+        if(newd1 > maxd)
+        {
+            maxd = newd1;
+            d2 = x;
+        }
+        
+        if(newd2 > maxd)
+        {
+            maxd = newd2;
+            d1 = x;
+        }
+
+        if(i%2==1)
+            cout<<maxd<<"\n";
+    }
+
+    return 0;
+}
+
