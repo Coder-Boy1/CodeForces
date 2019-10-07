@@ -1,0 +1,188 @@
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define N 1000005
+ 
+int A[N],tree[4*N];
+ 
+void build(int node, int start, int end)
+{
+    if(start == end)
+    {
+        tree[node] = A[start];
+    }
+    else
+    {
+        int mid = (start + end) / 2;
+        build(2*node, start, mid);
+        build(2*node+1, mid+1, end);
+        tree[node] = tree[2*node]+tree[2*node+1];
+    }
+}
+ 
+void update(int node, int start, int end, int idx, int val)
+{
+    if(start == end)
+    {
+        A[idx] += val;
+        tree[node] += val;
+    }
+    else
+    {
+        int mid = (start + end) / 2;
+        if(start <= idx and idx <= mid)
+        {
+            update(2*node, start, mid, idx, val);
+        }
+        else
+        {
+            update(2*node+1, mid+1, end, idx, val);
+        }
+        tree[node] = tree[2*node]+tree[2*node+1];
+    }
+}
+int query(int node, int start, int end, int l, int r)
+{
+    if(r < start || end < l)
+    {
+        return 0;
+    }
+    if(l <= start && end <= r)
+    {
+        return tree[node];
+    }
+    int mid = (start + end) / 2;
+    int p1 = query(2*node, start, mid, l, r);
+    int p2 = query(2*node+1, mid+1, end, l, r);
+    return p1+p2;
+}
+ 
+ 
+int col[N];
+vector < int > a[N];
+int vis[N];
+int sz[N];
+int ans[N];
+int freq[N];
+vector < pair < int , int > > q[N];
+int maxn; 
+ 
+void dfs(int n)
+{
+    vis[n] = 1;
+    sz[n] = 1;
+    for(int i=0;i<a[n].size();i++)
+    {
+        if(vis[a[n][i]]==0)
+        {
+            dfs(a[n][i]);
+            sz[n]+=sz[a[n][i]];
+        }
+    }
+}
+ 
+map < int , int > find(int n, int p, int isLarge)
+{
+    int maxz = 0, node = -1;
+    for(int i=0;i<a[n].size();i++)
+    {
+        if(a[n][i]!=p)
+        {
+            if(sz[a[n][i]] > maxz)
+            {
+                maxz = sz[a[n][i]];
+                node = a[n][i];
+            }
+        }
+    }
+ 
+    map < int , int > arr1;
+    for(int i=0;i<a[n].size();i++)
+    {
+        if(a[n][i]!=p && a[n][i]!=node)
+        {
+            map < int , int > temp = find(a[n][i], n, 0);
+            for(auto it=temp.begin(); it!=temp.end(); it++)
+            {
+                arr1[it->first]+=it->second;
+            }
+        }
+    }
+    map < int , int > arr;
+    if(node!=-1)
+    {
+        arr = find(node, n, 1);
+    }
+ 
+    for(auto it=arr1.begin(); it!=arr1.end(); it++)
+    {
+        int c = it->first;
+        if(arr[c]!=0)
+            update(1, 1, maxn, arr[c], -1);
+        arr[c]+=it->second;
+        update(1, 1, maxn, arr[c], 1);
+    }
+ 
+    if(arr[col[n]]!=0)
+        update(1, 1, maxn, arr[col[n]], -1);
+    arr[col[n]]++;
+    update(1, 1, maxn, arr[col[n]], +1);
+ 
+    
+    for(int i=0;i<q[n].size();i++)
+    {
+        int x = q[n][i].first;
+        ans[q[n][i].second] = query(1, 1, maxn, x, maxn);
+    }
+ 
+    if(isLarge==0)
+    {
+        for(auto it = arr.begin(); it!= arr.end(); it++)
+        {
+            update(1, 1, maxn, it->second, -1);
+        }
+    }
+ 
+    return arr;
+}
+ 
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+ 
+    int n, m;
+    cin>>n>>m;
+    maxn = n;
+ 
+    for(int i=1;i<=n;i++)
+    {
+        cin>>col[i];
+    }
+ 
+    for(int i=1;i<=n-1;i++)
+    {
+        int u, v;
+        cin>>u>>v;
+        a[u].push_back(v);
+        a[v].push_back(u);
+    }
+ 
+    for(int i=1;i<=m;i++)
+    {
+        int x, y;
+        cin>>x>>y;
+        q[x].push_back({y, i});
+    }
+ 
+    dfs(1);
+    find(1, 0, 1);
+ 
+    for(int i=1;i<=m;i++)
+    {
+        cout<<ans[i]<<"\n";
+    }
+   
+    return 0;
+}
