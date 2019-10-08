@@ -1,0 +1,101 @@
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define N 205
+ 
+int vis[N][N];
+int edg[N][N];
+int fedg[N][N];
+int deg[N];
+ 
+int n1;
+ 
+#define int long long
+ 
+void foo(int n)
+{
+    for(int i=1;i<=n;i++)
+    {
+        for(int j=1;j<=n;j++)
+        {
+            vis[i][j] = 0;
+            edg[i][j] = 0;
+            fedg[i][j] = 0;
+            deg[i] = 0;
+        }
+    }
+}
+ 
+void dfs(int n)
+{
+    for(int i=1;i<=n1;i++)
+    {
+        if(edg[n][i]!=0)
+        {
+            if(edg[n][i]==1)
+                cout<<n<<" "<<i<<"\n";
+            int cur = 1;
+            if(edg[n][i]!=1)
+                cur = 2;
+            edg[n][i]-=cur;
+            edg[i][n]-=cur;
+            dfs(i);
+            return ;
+        }
+    }
+}
+ 
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    int t;
+    cin>>t;
+ 
+    while(t--)
+    {
+        int n, m;
+        cin>>n>>m;
+        n1=  n;
+        for(int i=0;i<m;i++)
+        {
+            int u, v;
+            cin>>u>>v;
+            edg[u][v]++;
+            edg[v][u]++;
+            deg[u]++;
+            deg[v]++;
+        }
+        
+        int ans = n;
+        
+        vector < int > arr;
+        for(int i=1;i<=n;i++)
+        {
+            if(deg[i]%2)
+            {
+                arr.push_back(i);
+                ans--;
+            }
+        }
+ 
+        for(int i=0;i<arr.size();i+=2)
+        {
+            edg[arr[i]][arr[i+1]]+=2;
+            edg[arr[i+1]][arr[i]]+=2;
+            
+        }
+ 
+        cout<<ans<<'\n';
+        for(int i=1;i<=n;i++)
+        {
+            dfs(i);
+        }
+        foo(n);
+    }
+ 
+ 
+    return 0;
+}
