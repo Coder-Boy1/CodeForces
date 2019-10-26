@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define int long long
+#define N 200005
+#define MOD 1000000007
+
+int lps[N];
+int dp[N];
+int ans[N];
+int pref[N];
+
+void computeLPSArray(string pat) 
+{ 
+    int len = 0; 
+    lps[0] = 0; 
+    int M = pat.length();
+    int i = 1; 
+    while (i < M) { 
+        if (pat[i] == pat[len]) { 
+            len++; 
+            lps[i] = len; 
+            i++; 
+        } 
+        else // (pat[i] != pat[len]) 
+        {
+            if (len != 0) { 
+                len = lps[len - 1]; 
+            } 
+            else 
+            { 
+                lps[i] = 0; 
+                i++; 
+            } 
+        } 
+    } 
+} 
+
+int32_t main()
+{
+    string s, t;
+    cin>>s>>t;
+
+    int tot = 0 ;
+    int n, m;
+    n = s.length();
+    m = t.length();
+
+    string x = t + '#' + s;
+    computeLPSArray(x);
+
+    int foo = 0;
+    int lst = 0;
+    for(int i=1; i<=n; i++)
+    {
+        int cur = m+i;
+        if( lps[cur] == m )
+        {
+            lst = cur - m - m + 1;
+        }
+        if(lst!=0)
+            ans[i]+=dp[lst-1];
+        if(lst!=0)
+        {
+            ans[i]+=lst;
+        }
+        pref[i]+=pref[i-1];
+        pref[i]+=ans[i];
+        pref[i]%=MOD;
+        tot+=pref[i];
+        tot%=MOD;
+        dp[i]+=tot;
+        dp[i]%=MOD;
+        foo+=ans[i];
+        foo%=MOD;
+    }
+    cout<<foo<<endl;
+    return 0;
+}
