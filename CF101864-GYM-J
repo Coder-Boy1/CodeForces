@@ -1,0 +1,193 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define int long long
+#define N 100005
+#define MOD 1000000007
+
+int P[N * 2];
+
+// Transform S into new string with special characters inserted.
+string convertToNewString(const string &s) {
+    string newString = "@";
+
+    for (int i = 0; i < s.size(); i++) {
+        newString += "#" + s.substr(i, 1);
+    }
+
+    newString += "#$";
+    return newString;
+}
+
+vector < pair < int , int > > longestPalindromeSubstring(const string s) {
+    string Q = convertToNewString(s);
+    int c = 0, r = 0;                // current center, right limit
+
+    for(int i=0;i<Q.size();i++)
+        P[i] = 0;
+
+    for (int i = 1; i < Q.size() - 1; i++) {
+        // find the corresponding letter in the palidrome subString
+        int iMirror = c - (i - c);
+
+        if(r > i) {
+            P[i] = min(r - i, P[iMirror]);
+        }
+
+        // expanding around center i
+        while (Q[i + 1 + P[i]] == Q[i - 1 - P[i]]){
+            P[i]++;
+        }
+
+        // Update c,r in case if the palindrome centered at i expands past r,
+        if (i + P[i] > r) {
+            c = i;              // next center = i
+            r = i + P[i];
+        }
+    }
+
+    // Find the longest palindrome length in p.
+
+    int maxPalindrome = 0;
+    int centerIndex = 0;
+
+ //   cout<<Q<<endl;
+    for (int i = 1; i < Q.size() - 1; i++) {
+
+        if (P[i] > maxPalindrome) {
+            maxPalindrome = P[i];
+            centerIndex = i;
+        }
+    }
+
+    int n = s.length();
+    vector < pair < int  , int > > cur;
+    int tt = 0;
+    for(int i=0;i<n;i++)
+        cur.push_back({0, 0});
+    for(int i=1; i<Q.size(); i++)
+    {
+        if(Q[i] >='a' && Q[i]<='z')
+        {
+            
+            int x = P[i]/2;
+            cur[tt].first = x;    
+            tt++;
+        }
+        else
+        {
+            int x = P[i]/2;
+            if( tt == s.length())
+                continue;
+            cur[tt].second = x;
+        }
+    }
+    return cur;
+}
+
+int32_t main()
+{
+
+    int t;
+    cin>>t;
+
+    while(t--)
+    {
+        int k;
+        cin>>k;
+        string s;
+        cin>>s;
+
+        if(k==1)
+        {
+            cout<<"0"<<endl;
+            continue;
+        }
+        else if(k==2)
+        {
+            int ans = 0;
+            int r = 0;
+            int n = s.length();
+            s+="*#";
+            for(int i=0;i<n;i++)
+            {
+                r = max(r, i);
+                if(r == n)
+                {
+                    ans += r - i;
+                }
+                else
+                {
+                    int maxr = r;
+                    while( r < n )
+                    {
+                        maxr = max(maxr, r);
+                        if(s[r]==s[r+1])
+                        {
+                            maxr = r;
+                            break;
+                        }
+                        if(s[r]==s[r+2])
+                        {
+                            maxr = r+1;
+                            break;
+                        }
+                        r++;
+                    }
+                    ans += maxr - i + 1;
+                }
+            }
+            cout<<ans<<endl;
+            continue;
+        }
+
+        int n = s.length();
+        vector < pair < int , int >  > temp = longestPalindromeSubstring(s);
+        int ans = 0;
+        int r = 0;
+        for(int i=0; i<n; i++)
+        {
+            while(r<n)
+            {
+                if( (temp[r].first*2 + 1 < k) && temp[r].second*2 < k)
+                {
+                    r++;
+                    continue;
+                }
+
+                int l1 = 1 + 2*min(temp[r].first, r-i);
+                int l2 = 2*min(temp[r].second, r-i);
+
+                if( l1 < k && l2 < k)
+                    r++;
+                else
+                    break;
+            }
+
+            if( r == n)
+            {
+                ans+= n - i;
+            }
+            else
+            {
+                int l1 = 1 + 2*min(temp[r].first, r-i);
+                int l2 = 2*min(temp[r].second, r-i);
+                
+                int maxr = n;
+                if( l1 >= k )
+                {
+                    maxr = min(maxr, r + (k-2)/2);
+                }
+            
+                if( l2 >= k)
+                {
+                    maxr = min(maxr, r + (k-3)/2);
+                }
+                ans+=maxr - i + 1;
+            }
+        }
+        cout<<ans<<endl;
+    }
+    return 0;
+}
