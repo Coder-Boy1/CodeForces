@@ -1,0 +1,78 @@
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define int long long
+#define N 100005
+ 
+vector < int > a[N];
+int vis[N];
+int sz[N];
+char parent[N];
+ 
+void dfsSize(int n, int p =-1)
+{
+    sz[n] = 1;
+    for(int i=0;i<a[n].size();i++)
+    {
+        if(vis[a[n][i]] || a[n][i]==p)
+            continue;
+        dfsSize(a[n][i], n);
+        sz[n]+=sz[a[n][i]];  
+    }
+}
+ 
+int dfsFindCenteroid(int n, int p, int groupSize)
+{
+    int centeriod = n;
+ 
+    for(int i=0; i<a[n].size();i++)
+    {
+        if(vis[a[n][i]] || a[n][i]==p)
+            continue;
+        if( sz[a[n][i]] > groupSize/2)
+            return dfsFindCenteroid(a[n][i], n, groupSize);
+    }
+ 
+    return centeriod;
+}
+ 
+void makeCenteroidTree(int n, char cur)
+{
+    dfsSize(n);
+    int centeroid = dfsFindCenteroid(n, -1, sz[n]);
+    vis[centeroid] = 1;
+    parent[centeroid] = cur;
+ 
+    for(int i=0;i<a[centeroid].size();i++)
+    {
+        if(vis[a[centeroid][i]]==0)
+        {
+            makeCenteroidTree(a[centeroid][i], cur+1);
+        }
+    }
+}
+ 
+int32_t main()
+{
+    int n;
+    cin>>n;
+ 
+    for(int i=0;i<n-1;i++)
+    {
+        int u, v;
+        cin>>u>>v;
+        a[u].push_back(v);
+        a[v].push_back(u);
+    }
+ 
+    makeCenteroidTree(1, 'A');
+ 
+    for(int i=1;i<=n;i++)
+    {
+        cout<<parent[i]<<" ";
+    }
+ 
+ 
+    return 0;
+}
